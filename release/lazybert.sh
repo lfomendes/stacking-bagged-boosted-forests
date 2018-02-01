@@ -18,39 +18,39 @@ do
 	echo 'Dataset:'
 	echo ${dataset}
 
-	echo 'Model:'
-	echo 'RF'
+	#echo 'Model:'
+	#echo 'RF'
 	# Random Forest
 	method=rf
-	python ../python/main.py -m ${method} -g 1 -j ${n_jobs} --cv ${cv} -s ${seed} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
+	#python ../python/main.py -m ${method} -g 1 -j ${n_jobs} --cv ${cv} -s ${seed} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
 
-	echo 'Model:'
-	echo 'lazy'
+	#echo 'Model:'
+	#echo 'lazy'
 	# Lazy Random Forest
-	method=lazy
-	python ../python/main.py -m ${method} --cv ${cv} -k ${k} -g 1 -s ${seed} -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
+	#method=lazy
+	#python ../python/main.py -m ${method} --cv ${cv} -k ${k} -g 1 -s ${seed} -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
 
-	echo 'Model:'
-	echo 'Broof'
+	#echo 'Model:'
+	#echo 'Broof'
 	# BROOF
-	method=broof
-	python ../python/main.py -m ${method} --cv ${cv} -g 1 -j ${n_jobs} -s ${seed} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
+	#method=broof
+	#python ../python/main.py -m ${method} --cv ${cv} -g 1 -j ${n_jobs} -s ${seed} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
 
-	echo 'Model:'
-	echo 'Bert'
+	#echo 'Model:'
+	#echo 'Bert'
 	# BERT
-	method=bert
-	python ../python/main.py -m ${method} --cv ${cv} -g 1 -j ${n_jobs} -s ${seed} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
+	#method=bert
+	#python ../python/main.py -m ${method} --cv ${cv} -g 1 -j ${n_jobs} -s ${seed} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
 
 	echo 'Model:'
 	echo 'Lazy Broof'
 	# Lazy BROOF
-	method=lazyBroof
-	python ../python/main.py -m ${method} -k ${k} --cv ${cv} -g 1 -j ${n_jobs} -s ${seed} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
+	#method=lazybroof
+	#python ../python/main.py -m ${method} -k ${k} --cv ${cv} -g 1 -j ${n_jobs} -s ${seed} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
 
 	echo 'Model:'
 	echo 'Lazy Bert'
 	# Lazy BERT
-	method=lazyBert
+	method=lazybert
 	python ../python/main.py -m ${method} -k ${k} --cv ${cv} -g 1 -j ${n_jobs} -s ${seed} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
 done

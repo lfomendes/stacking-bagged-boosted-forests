@@ -101,8 +101,8 @@ default_params = {
 			 'criterion': 'gini', 'random_state': None, 'max_features': 'auto',
 			 'max_depth': None, 'class_weight': None},
 
-	'lazybert': {'warm_start': False, 'n_jobs': 1, 'verbose': 0, 'n_iterations': 200,
-			 'max_leaf_nodes': None, 'learning_rate': 1, 'n_trees': 8, 'n_neighbors': 200,
+	'lazybert': {'warm_start': False, 'n_jobs': 1, 'verbose': 0,
+			 'max_leaf_nodes': None, 'n_estimators': 8, 'n_neighbors': 200,
 			 'min_samples_leaf': 1, 'min_samples_split': 2, 
 			 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 
 			 'random_state': None, 'max_features': 'auto', 'max_depth': None, 

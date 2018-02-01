@@ -166,7 +166,7 @@ default_tuning_params = {
 	'xt': [{'criterion': ['entropy', 'gini'], 
 			'n_estimators': [200], 'max_features': ['sqrt', 'log2', 0.08,
 			0.15, 0.30]}],
-	'lazy': [{'n_neighbors': [30, 100, 200, 300, 500], 'criterion': ['entropy', 'gini'], 
+	'lazy': [{'n_neighbors': [30, 100, 200, 500], 'criterion': ['gini'], 
 			'n_estimators': [100], 'max_features': ['sqrt']}],
 	'lxt': [{'n_neighbors': [30, 100, 200, 300, 500], 'criterion': ['entropy', 'gini'], 
 			'n_estimators': [100], 'max_features': ['sqrt']}],
@@ -174,12 +174,12 @@ default_tuning_params = {
 				'max_features': [0.08]}],
 
 	# TODO 			
-	'lazybroof'	: [{'n_neighbors': [30, 100, 200, 300, 500], 'n_estimators': [5], 'max_features': [0.08]}],
-	'lazybert'	: [{'n_neighbors': [30, 100, 200, 300, 500], 'n_estimators': [8], 'max_features': [0.08]}],
+	'lazybroof'	: [{'n_neighbors': [30, 100, 200, 500], 'n_estimators': [8], 'max_features': [0.08]}],
+	'lazybert'	: [{'n_neighbors': [30, 100, 200, 500], 'n_estimators': [8], 'max_features': [0.08]}],
 
-
-	'bert': [{'n_trees': [5, 8, 10, 15, 25], 'n_iterations': [50, 100, 200],
-				'max_features': ['sqrt', 'log2', 0.08, 0.15, 0.30]}],
+	'bert': [{'n_trees': [8], 'n_iterations': [200]}],
+	#'bert': [{'n_trees': [5, 8, 10, 15, 25], 'n_iterations': [50, 100, 200],
+#				'max_features': ['sqrt', 'log2', 0.08, 0.15, 0.30]}],
 	'mlr': [],
 	'dt': [{'criterion': ['entropy', 'gini'], 'max_depth': [None] + list(2.0 ** np.arange(0, 10, 1))}],
 	'vig': [],

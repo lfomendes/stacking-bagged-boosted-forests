@@ -1,10 +1,10 @@
 from sklearn.datasets import load_iris, fetch_20newsgroups, load_svmlight_file, dump_svmlight_file
-from sklearn.cross_validation import KFold, StratifiedKFold
+from sklearn.model_selection import KFold, StratifiedKFold
 
 from sklearn.feature_extraction.text import TfidfTransformer, CountVectorizer
 from sklearn.utils import check_random_state
 
-from sklearn.grid_search import GridSearchCV
+from sklearn.model_selection import GridSearchCV
 
 from sklearn.base import clone
 from sklearn.metrics import f1_score
@@ -132,8 +132,7 @@ class ClassificationApp(BaseApp):
 	def _setup_instantiator(self, args):
 		random_instance = check_random_state(args.seed)
 		self.instantiator.set_general_params(vars(args))
-		self.instantiator.set_general_params(
-						{'random_state': random_instance.randint(0,MAX_INT)})
+		self.instantiator.set_general_params({'random_state': random_instance.randint(0,MAX_INT)})
 		
 		#self.instantiator.set_params(estimators_params)
 
@@ -161,12 +160,15 @@ class ClassificationApp(BaseApp):
 	def run(self, args):
 		X, y = self._load_dataset(args)
 		print(X.shape)
-		kf = StratifiedKFold(y, n_folds=args.trials, shuffle=True,
-												 random_state=args.seed)
+		print(args)
+		#n_folds=args.trials,
 
+		skf = StratifiedKFold(n_splits=args.trials,shuffle=True, random_state=args.seed)
+
+		#kf = StratifiedKFold(y, n_splits=3, shuffle=True, random_state=args.seed)
 		#kf = KFold(len(y), n_folds=args.trials,
 		#					 shuffle=True, random_state=args.seed)
-
+		print(skf)
 
 		estimator, tuned_parameters = self._setup_instantiator(args)
 
@@ -178,7 +180,7 @@ class ClassificationApp(BaseApp):
 		print(estimator.get_params(deep=False))
 
 		k = 1
-		for train_index, test_index in kf:
+		for train_index, test_index in skf.split(X, y):
 			
 			if(k < args.start_fold):
 				k = k + 1
@@ -331,8 +333,10 @@ class TextClassificationApp(ClassificationApp):
 		estimators_params = {
 			'rf':	{'n_estimators': args.trees},
 			'xt': 	{'n_estimators': args.trees},
-			'bag': 	{'n_estimators': args.trees},
+			#'bag': 	{'n_estimators': args.trees},
 			'lazy':	{'n_estimators': args.trees},
+			'lazybroof':{'n_estimators': args.trees},
+			'lazybert':{'n_estimators': args.trees},
 			'lxt': 	{'n_estimators': args.trees},
 			'broof':{'n_trees': args.trees},
 			'bert': {'n_trees': args.trees},
@@ -341,9 +345,9 @@ class TextClassificationApp(ClassificationApp):
 
 		self.instantiator.set_params(estimators_params)
 
-		estimators_params = {
-			'bag':	{'base_estimator': self.instantiator.get_instance(args.base_estimator)}
-		}
+		# estimators_params = {
+		# 	'bag':	{'base_estimator': self.instantiator.get_instance(args.base_estimator)}
+		# }
 
 		self.instantiator.set_params(estimators_params)
 
@@ -401,7 +405,6 @@ class StackerApp(TextClassificationApp):
 
 	def _create_stacking(self, args):
 		random_instance = check_random_state(args.seed)
-
 
 		params = json.loads(args.base_params)
 		base_classifiers = json.loads(args.base_classifiers)

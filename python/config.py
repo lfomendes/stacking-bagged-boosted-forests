@@ -13,7 +13,7 @@ default_tuning_params: dict, {'estimator_name': dict}
 from sklearn import naive_bayes, neighbors, svm, ensemble, tree
 from sklearn import linear_model, discriminant_analysis
 
-from xsklearn.neighbors import LazyNNRF, LazyNNExtraTrees 
+from xsklearn.neighbors import LazyNNRF, LazyNNExtraTrees, LazyNNBroof,LazyNNBert 
 from xsklearn.ensemble import Broof, Bert, VIG, DecisionTemplates, SCANN
 from xsklearn.linear_model import MLR, LinearSVM, LinearModelTree
 from xsklearn import DSC
@@ -34,6 +34,8 @@ base_estimators = {
 	'xt': ensemble.ExtraTreesClassifier,
 	'lazy': LazyNNRF,
 	'lxt': LazyNNExtraTrees,
+	'lazybroof': LazyNNBroof,	
+	'lazybert': LazyNNBert,
 	'broof': Broof,
 	'bert': Bert,
 	'mlr': MLR,
@@ -91,12 +93,28 @@ default_params = {
 			 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 
 			 'criterion': 'gini', 'random_state': None, 'max_features': 'auto',
 			 'max_depth': None, 'class_weight': None},
+    # TODO			 
+	'lazybroof': {'warm_start': False, 'n_neighbors': 200, 'n_gpus': 0, 'n_jobs': 1,
+			 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': False,
+			 'oob_score': False, 'min_samples_leaf': 1, 'n_estimators': 200, 
+			 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 
+			 'criterion': 'gini', 'random_state': None, 'max_features': 'auto',
+			 'max_depth': None, 'class_weight': None},
+
+	'lazybert': {'warm_start': False, 'n_jobs': 1, 'verbose': 0, 'n_iterations': 200,
+			 'max_leaf_nodes': None, 'learning_rate': 1, 'n_trees': 8, 'n_neighbors': 200,
+			 'min_samples_leaf': 1, 'min_samples_split': 2, 
+			 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 
+			 'random_state': None, 'max_features': 'auto', 'max_depth': None, 
+			 'class_weight': None},	 
+
 	'broof':{'warm_start': False, 'n_jobs': 1, 'verbose': 0, 'n_iterations': 200,
 			 'max_leaf_nodes': None, 'learning_rate': 1, 'n_trees': 10, 
 			 'min_samples_leaf': 1, 'min_samples_split': 2, 
 			 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 
 			 'random_state': None, 'max_features': 'auto', 'max_depth': None, 
 			 'class_weight': None},
+
 	'bert': {'warm_start': False, 'n_jobs': 1, 'verbose': 0, 'n_iterations': 200,
 			 'max_leaf_nodes': None, 'learning_rate': 1, 'n_trees': 8, 
 			 'min_samples_leaf': 1, 'min_samples_split': 2, 
@@ -143,16 +161,23 @@ default_tuning_params = {
 	'knn': 	[{'n_neighbors': [10, 30, 100, 200, 300], 'weights': ['uniform', 'distance']}],
 	'rf': [{'criterion': ['entropy', 'gini'], 
 			'n_estimators': [200], 'max_features': ['sqrt', 'log2', 0.08,
-			0.15, 0.30]}],
+	 		0.15, 0.30]}],
+	# 'rf': [{'n_estimators': [50,100,200]}],			
 	'xt': [{'criterion': ['entropy', 'gini'], 
 			'n_estimators': [200], 'max_features': ['sqrt', 'log2', 0.08,
 			0.15, 0.30]}],
-	'lazy': [{'n_neighbors': [10, 30, 100, 200, 300, 500], 'criterion': ['entropy', 'gini'], 
+	'lazy': [{'n_neighbors': [30, 100, 200, 300, 500], 'criterion': ['entropy', 'gini'], 
 			'n_estimators': [100], 'max_features': ['sqrt']}],
-	'lxt': [{'n_neighbors': [10, 30, 100, 200, 300, 500], 'criterion': ['entropy', 'gini'], 
+	'lxt': [{'n_neighbors': [30, 100, 200, 300, 500], 'criterion': ['entropy', 'gini'], 
 			'n_estimators': [100], 'max_features': ['sqrt']}],
 	'broof': [{'n_trees': [5], 'n_iterations': [50],
 				'max_features': [0.08]}],
+
+	# TODO 			
+	'lazybroof'	: [{'n_neighbors': [30, 100, 200, 300, 500], 'n_estimators': [5], 'max_features': [0.08]}],
+	'lazybert'	: [{'n_neighbors': [30, 100, 200, 300, 500], 'n_estimators': [8], 'max_features': [0.08]}],
+
+
 	'bert': [{'n_trees': [5, 8, 10, 15, 25], 'n_iterations': [50, 100, 200],
 				'max_features': ['sqrt', 'log2', 0.08, 0.15, 0.30]}],
 	'mlr': [],
@@ -182,6 +207,8 @@ default_transformers = {
 	'lazy': [],
 	'lxt': [],
 	'broof': [],
+	'lazybroof': [],
+	'lazybert': [],	
 	'bert': [],
 	#'mlr': [('selection', SelectFromModel(ensemble.ExtraTreesClassifier(n_jobs=8, n_estimators=300), threshold="mean"))],
 	'mlr':[],

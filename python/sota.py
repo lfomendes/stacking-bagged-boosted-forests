@@ -1,10 +1,10 @@
 from sklearn.datasets import fetch_20newsgroups, load_svmlight_file
-from sklearn.cross_validation import train_test_split, cross_val_predict, cross_val_score, KFold, StratifiedKFold
+from sklearn.model_selection import train_test_split, cross_val_predict, cross_val_score, KFold, StratifiedKFold
 from sklearn.feature_extraction.text import TfidfTransformer, CountVectorizer
 
 from sklearn.linear_model import *
 
-from sklearn.grid_search import GridSearchCV
+from sklearn.model_selection import GridSearchCV
 
 from sklearn.base import clone
 from sklearn.metrics import f1_score

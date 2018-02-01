@@ -231,8 +231,7 @@ class LazyNNRF(BaseEstimator, ClassifierMixin):
             The predicted classes.
         """
         # get knn for all test sample
-        idx = self.kNN.kneighbors(X, return_distance=False)
-        
+        idx = self.kNN.kneighbors(X, return_distance=False)       
         estimator = self._make_estimator()
 
         pred = Parallel(n_jobs=self.n_jobs, verbose=0,
@@ -266,7 +265,6 @@ class LazyNNRF(BaseEstimator, ClassifierMixin):
     def score(self, X, y):
         return np.mean(self.predict(X) == y)
 
-
 class LazyNNExtraTrees(LazyNNRF):
     def _make_estimator(self):
         return ExtraTreesClassifier(n_estimators=self.n_estimators,
@@ -278,6 +276,23 @@ class LazyNNExtraTrees(LazyNNRF):
                          max_features=self.max_features,
                          max_leaf_nodes=self.max_leaf_nodes,
                          random_state=self.random_state)
+
+class LazyNNBert(LazyNNRF):
+    def _make_estimator(self):
+        return Bert(warm_start = False, 
+             n_jobs=-1, verbose= 0, 
+             n_iterations= 200,
+             max_leaf_nodes= self.max_leaf_nodes, 
+             learning_rate= 1, 
+             n_trees= self.n_estimators,  #TODO Revisar com Phael
+             min_samples_leaf= self.min_samples_leaf, 
+             min_samples_split= self.min_samples_split, 
+             min_weight_fraction_leaf= self.min_weight_fraction_leaf, 
+             criterion= self.criterion, 
+             random_state= None, 
+             max_features= self.max_features, 
+             max_depth= self.max_depth, 
+             class_weight= None)    
 
 class LazyNNBroof(LazyNNRF):
     def __init__(self,

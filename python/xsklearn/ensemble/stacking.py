@@ -1,8 +1,8 @@
 from sklearn.base import BaseEstimator, ClassifierMixin
 
-from sklearn.cross_validation import KFold, StratifiedKFold
+from sklearn.model_selection import KFold, StratifiedKFold
 
-from sklearn.grid_search import GridSearchCV
+from sklearn.model_selection import GridSearchCV
 
 from sklearn.base import clone
 from sklearn.metrics import f1_score

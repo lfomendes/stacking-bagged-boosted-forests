@@ -15,7 +15,7 @@ from scipy.sparse import issparse
 from sklearn.externals.joblib import Parallel, delayed
 
 from sklearn.utils import check_random_state, check_array, compute_sample_weight
-from sklearn.utils.fixes import bincount
+#from sklearn.utils.fixes import bincount
 
 import pickle
 from sklearn.externals import joblib
@@ -34,7 +34,7 @@ def _generate_unsampled_indices(random_state, samples_weight,n_samples):
     """Private function used to forest._set_oob_score fuction."""
     sample_indices = _generate_sample_indices(random_state, samples_weight,
                                                                      n_samples)
-    sample_counts = bincount(sample_indices, minlength=n_samples)
+    sample_counts = np.bincount(sample_indices, minlength=n_samples)
     unsampled_mask = sample_counts == 0
     indices_range = np.arange(n_samples)
     unsampled_indices = indices_range[unsampled_mask]
@@ -56,7 +56,7 @@ def _parallel_build_trees(tree, forest, X, y, sample_weight, tree_idx, n_trees,
 
         indices = _generate_sample_indices(tree.random_state, sample_weight,
                                                                      n_samples)
-        sample_counts = bincount(indices, minlength=n_samples)
+        sample_counts = np.bincount(indices, minlength=n_samples)
         curr_sample_weight *= sample_counts
 
         if class_weight == 'subsample':

@@ -2,12 +2,12 @@ import warnings
 from app import TextClassificationApp
 
 from sklearn.datasets import load_iris, fetch_20newsgroups, load_svmlight_file, dump_svmlight_file
-from sklearn.cross_validation import KFold, StratifiedKFold
+from sklearn.model_selection import KFold, StratifiedKFold
 
 from sklearn.feature_extraction.text import TfidfTransformer, CountVectorizer
 from sklearn.utils import check_random_state
 
-from sklearn.grid_search import GridSearchCV
+from sklearn.model_selection import GridSearchCV
 
 from sklearn.base import clone
 from sklearn.metrics import f1_score

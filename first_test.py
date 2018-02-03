@@ -33,9 +33,9 @@ print('The scikit-learn version is {}.'.format(sklearn.__version__))
 # Divide in train and test
 X,y = get_data('../datasets/spambase.svm')
 
-skf = StratifiedKFold(n_splits=2)
+#skf = StratifiedKFold(n_splits=2)
 
-X_train, X_test, y_train, y_true = train_test_split(X, y, test_size=0.33, random_state=42)
+X_train, X_test, y_train, y_true = train_test_split(X, y, test_size=0.30, random_state=42)
 
 #print('\n\n RF \n\n')
 # Create and train the classifier
@@ -49,9 +49,9 @@ X_train, X_test, y_train, y_true = train_test_split(X, y, test_size=0.33, random
 #testing(brf,X_train,X_test,y_train,y_true)
 
 
-lazy = LazyNNRF(n_neighbors=50,n_gpus=1)
-print('\n\n LazyNNRF - 50  \n\n')
-testing(lazy,X_train,X_test,y_train,y_true)
+# lazy = LazyNNRF(n_neighbors=50,n_gpus=1)
+# print('\n\n LazyNNRF - 50  \n\n')
+# testing(lazy,X_train,X_test,y_train,y_true)
 
 
 #lazy = LazyNNRF(n_gpus=4)
@@ -63,8 +63,8 @@ testing(lazy,X_train,X_test,y_train,y_true)
 #print('\n\n LazyNNBroof\n\n')
 #testing(lazy,X_train,X_test,y_train,y_true)
 
-# lazy = LazyNNBert()
-# print('\n\n LazyNNBert\n\n')
-# testing(lazy,X_train,X_test,y_train,y_true)
+lazy = LazyNNBert()
+print('\n\n LazyNNBert\n\n')
+testing(lazy,X_train,X_test,y_train,y_true)
 
 

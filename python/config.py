@@ -21,7 +21,7 @@ from xsklearn import DSC
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_selection import SelectFromModel 
 
-import xgboost as xgb
+#import xgboost as xgb
 
 import numpy as np
 
@@ -50,7 +50,7 @@ base_estimators = {
 	'gbt': ensemble.GradientBoostingClassifier,
 	'adarf': ensemble.AdaBoostClassifier,
 	'dsc': DSC,
-	'xgb': xgb.XGBClassifier,
+	#'xgb': xgb.XGBClassifier,
 	'scann': SCANN
 }
 
@@ -118,7 +118,7 @@ default_params = {
 	'bert': {'warm_start': False, 'n_jobs': 1, 'verbose': 0, 'n_iterations': 200,
 			 'max_leaf_nodes': None, 'learning_rate': 1, 'n_trees': 8, 
 			 'min_samples_leaf': 1, 'min_samples_split': 2, 
-			 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 
+			 'min_weight_fraction_leaf': 0.0, 'criterion': 'entropy', 
 			 'random_state': None, 'max_features': 'auto', 'max_depth': None, 
 			 'class_weight': None},
 	'mlr':	{},
@@ -147,10 +147,10 @@ default_params = {
 	'adarf': {'n_estimators': 200, 'base_estimator': ensemble.RandomForestClassifier(n_jobs=8,max_features=0.15,n_estimators=20),
 			 'random_state': None, 'learning_rate': 1, 'algorithm': 'SAMME.R'},
 	'dsc': {'alpha': 2.0},
-	'xgb': {'reg_alpha': 0, 'colsample_bytree': 1.0, 'silent': True, 'colsample_bylevel': 0.5,
- 				'scale_pos_weight': 1, 'learning_rate': 0.1, 'missing': None, 'max_delta_step': 0,
- 				'nthread': 7, 'base_score': 0.5, 'n_estimators': 200, 'subsample': 1.0, 'reg_lambda': 1,
- 				'seed': 42, 'min_child_weight': 1, 'objective': 'binary:logistic', 'max_depth': 50, 'gamma': 0},
+	# 'xgb': {'reg_alpha': 0, 'colsample_bytree': 1.0, 'silent': True, 'colsample_bylevel': 0.5,
+ # 				'scale_pos_weight': 1, 'learning_rate': 0.1, 'missing': None, 'max_delta_step': 0,
+ # 				'nthread': 7, 'base_score': 0.5, 'n_estimators': 200, 'subsample': 1.0, 'reg_lambda': 1,
+ # 				'seed': 42, 'min_child_weight': 1, 'objective': 'binary:logistic', 'max_depth': 50, 'gamma': 0},
  	'scann': {}
 }
 
@@ -193,7 +193,7 @@ default_tuning_params = {
 	'dsc': [{'alpha': [0, 0.25, 0.5, 0.75, 1.0, 2.0, 5.0, 10.0]}],
 	'scann': [{}],
 	#'xgb': [{'colsample_bytree': [0.1, 0.3, 0.5, 0.7, 1.0], 'subsample': [0.5, 0.7, 1.0]}]
-	'xgb': [{'colsample_bytree': [0.1, 0.3, 0.5, 0.7, 1.0]}]#'reg_lambda': [0, 1e-5, 1e-2, 0.1, 1, 100], 'reg_alpha': [0, 1e-5, 1e-2, 0.1, 1, 100]}]
+	# 'xgb': [{'colsample_bytree': [0.1, 0.3, 0.5, 0.7, 1.0]}]#'reg_lambda': [0, 1e-5, 1e-2, 0.1, 1, 100], 'reg_alpha': [0, 1e-5, 1e-2, 0.1, 1, 100]}]
 }
 
 default_transformers = {

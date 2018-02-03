@@ -185,6 +185,7 @@ class LazyNNRF(BaseEstimator, ClassifierMixin):
         return self
 
     def runForests(self, X, idx, q, p):
+        print('Run Forest')
         pred = np.zeros((len(idx), self.n_classes_))
 
         selector = ReduceFeatureSpace() 
@@ -234,8 +235,10 @@ class LazyNNRF(BaseEstimator, ClassifierMixin):
         length = len(idx)
         chunk_size = int(ceil(length/float(self.n_jobs)))
 
+        print('entrou')
         # Run processes
         for p in range(1, self.n_jobs + 1):
+            print('job')
             s = (p-1)*chunk_size
             e = p*chunk_size if p*chunk_size <= length else length
             process = mp.Process(target=self.runForests, args=(X[s:e],idx[s:e],q, p,))
@@ -320,6 +323,72 @@ class LazyNNExtraTrees(LazyNNRF):
         return
 
 class LazyNNBert(LazyNNRF):
+    def __init__(self,
+                 n_iterations=200,
+                 learning_rate=1,
+                 n_neighbors=200,
+                 n_estimators=5,
+                 criterion="gini",
+                 max_depth=None,
+                 min_samples_split=2,
+                 min_samples_leaf=1,
+                 min_weight_fraction_leaf=0.,
+                 max_features="auto",
+                 max_leaf_nodes=None,
+                 bootstrap=True,
+                 oob_score=False,
+                 n_jobs=1,
+                 random_state=None,
+                 verbose=0,
+                 warm_start=False,
+                 class_weight=None,
+                 n_gpus=1):
+
+        super(LazyNNBert, self).__init__(n_neighbors=n_neighbors,
+                                        n_estimators=n_estimators,
+                                        criterion=criterion,
+                                        max_depth=max_depth,
+                                        min_samples_split=min_samples_split,
+                                        min_samples_leaf=min_samples_leaf,
+                                        min_weight_fraction_leaf=min_weight_fraction_leaf,
+                                        max_features=max_features,
+                                        max_leaf_nodes=max_leaf_nodes,
+                                        bootstrap=bootstrap,
+                                        oob_score=oob_score,
+                                        n_jobs=n_jobs,
+                                        random_state=random_state,
+                                        verbose=verbose,
+                                        warm_start=warm_start,
+                                        class_weight=class_weight,
+                                        n_gpus=n_gpus)
+
+        self.n_iterations = n_iterations
+        self.learning_rate = learning_rate
+        # everyone's params 
+        self.n_jobs = n_jobs
+
+        # kNN params
+        self.n_neighbors = n_neighbors
+        self.n_gpus = n_gpus
+        
+        # ForestBase params
+        self.n_estimators = n_estimators
+        self.criterion = criterion
+        self.max_depth = max_depth
+        self.min_samples_split = min_samples_split
+        self.min_samples_leaf = min_samples_leaf
+        self.min_weight_fraction_leaf = min_weight_fraction_leaf
+        self.max_features = max_features
+        self.max_leaf_nodes = max_leaf_nodes
+        self.bootstrap=bootstrap
+        self.oob_score=oob_score
+        self.random_state=random_state
+        self.verbose=verbose
+        self.warm_start=warm_start
+        self.class_weight=class_weight
+
+        print('LAZYBERT')
+
     def runForests(self, X, idx, q, p):
         random_guesses = 0 
         pred = np.zeros((len(idx), self.n_classes_))
@@ -332,6 +401,7 @@ class LazyNNBert(LazyNNRF):
             X_t, X_i = X_t[:len(ids)], X_t[len(ids):]
             #X_t, X_i = (self.X_train[ids],X[i])
             density = X_t.nnz/float(X_t.shape[0])
+            print('BERT --')
             rf = Bert(n_trees=self.n_estimators,
                         n_iterations=self.n_iterations,
                         learning_rate=self.learning_rate,
@@ -434,6 +504,7 @@ class LazyNNBroof(LazyNNRF):
             X_t, X_i = X_t[:len(ids)], X_t[len(ids):]
             #X_t, X_i = (self.X_train[ids],X[i])
             density = X_t.nnz/float(X_t.shape[0])
+            print('Broof --')
             rf = Broof(n_trees=self.n_estimators,
                         n_iterations=self.n_iterations,
                         learning_rate=self.learning_rate,

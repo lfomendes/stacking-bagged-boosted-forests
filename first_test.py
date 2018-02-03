@@ -59,9 +59,9 @@ X_train, X_test, y_train, y_true = train_test_split(X, y, test_size=0.30, random
 #testing(lazy,X_train,X_test,y_train,y_true)
 
 
-#lazy = LazyNNBroof()
-#print('\n\n LazyNNBroof\n\n')
-#testing(lazy,X_train,X_test,y_train,y_true)
+# lazy = LazyNNBroof()
+# print('\n\n LazyNNBroof\n\n')
+# testing(lazy,X_train,X_test,y_train,y_true)
 
 lazy = LazyNNBert()
 print('\n\n LazyNNBert\n\n')

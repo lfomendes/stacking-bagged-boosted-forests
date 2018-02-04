@@ -6,9 +6,9 @@ n_jobs=$3
 trials=5
 k=200
 seed=42
-cv=0
+cv=3
 
-datasets=('spambase')
+datasets=('acm')
 
 ################################################################################
 #				 					${dataset} 									   #
@@ -18,17 +18,17 @@ do
 	echo 'Dataset:'
 	echo ${dataset}
 
-	#echo 'Model:'
-	#echo 'RF'
+	echo 'Model:'
+	echo 'RF'
 	# Random Forest
-	#method=rf
-	#python ../python/main.py -m ${method} -g 1 -j ${n_jobs} --cv ${cv} -s ${seed} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
+	method=rf
+	python ../python/main.py -m ${method} -g 1 -j ${n_jobs} --cv ${cv} -s ${seed} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
 
-	#echo 'Model:'
-	#echo 'xt'
+	echo 'Model:'
+	echo 'xt'
 	# Random Forest
-	#method=xt
-	#python ../python/main.py -m ${method} -g 1 -j ${n_jobs} --cv ${cv} -s ${seed} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
+	method=xt
+	python ../python/main.py -m ${method} -g 1 -j ${n_jobs} --cv ${cv} -s ${seed} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
 
 	# echo 'Model:'
 	# echo 'lazy'
@@ -83,8 +83,7 @@ done
 # method=lazybert
 # python ../python/main.py -m ${method} --criterion entropy -t 8 -k ${k} -f 0.3 -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
 
-
-echo 'LazyBroof'
-method=broof
-dataset=spambase
-python ../python/main.py -m ${method} -k ${k} -t 8 -i 100 -f 0.08 -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
+# echo 'LazyBroof'
+# method=lazybroof
+# dataset=spambase
+# python ../python/main.py -m ${method} -k ${k} -t 8 -i 100 -f 0.08 -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}

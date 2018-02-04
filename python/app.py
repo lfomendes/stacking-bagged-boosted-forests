@@ -340,7 +340,7 @@ class TextClassificationApp(ClassificationApp):
 			'lxt': 	{'n_estimators': args.trees},
 			'broof':{'n_trees': args.trees},
 			'bert': {'n_trees': args.trees},
-			'xgb': {'n_estimators': args.trees}
+			#'xgb': {'n_estimators': args.trees}
 		}
 
 		self.instantiator.set_params(estimators_params)

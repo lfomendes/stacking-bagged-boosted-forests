@@ -185,7 +185,6 @@ class LazyNNRF(BaseEstimator, ClassifierMixin):
         return self
 
     def runForests(self, X, idx, q, p):
-        print('Run Forest')
         pred = np.zeros((len(idx), self.n_classes_))
 
         selector = ReduceFeatureSpace() 
@@ -213,6 +212,7 @@ class LazyNNRF(BaseEstimator, ClassifierMixin):
         return
 
     def predict_proba(self, X):
+
         """Predict class for X.
         The predicted class of an input sample is computed as the majority
         prediction of the trees in the forest.
@@ -235,10 +235,8 @@ class LazyNNRF(BaseEstimator, ClassifierMixin):
         length = len(idx)
         chunk_size = int(ceil(length/float(self.n_jobs)))
 
-        print('entrou')
         # Run processes
         for p in range(1, self.n_jobs + 1):
-            print('job')
             s = (p-1)*chunk_size
             e = p*chunk_size if p*chunk_size <= length else length
             process = mp.Process(target=self.runForests, args=(X[s:e],idx[s:e],q, p,))
@@ -296,6 +294,7 @@ class LazyNNRF(BaseEstimator, ClassifierMixin):
 
 class LazyNNExtraTrees(LazyNNRF):
     def runForests(self, X, idx, q, p):
+        print('run forest Extra --')
         pred = np.zeros((len(idx), self.n_classes_))
 
         selector = ReduceFeatureSpace() 
@@ -393,6 +392,7 @@ class LazyNNBert(LazyNNRF):
         random_guesses = 0 
         pred = np.zeros((len(idx), self.n_classes_))
 
+        print('Run Bert --')
         selector = ReduceFeatureSpace() 
         for i,ids in enumerate(idx):
             ids = ids[np.logical_and(ids < self.X_train.shape[0], ids >= 0)]
@@ -492,10 +492,13 @@ class LazyNNBroof(LazyNNRF):
         self.warm_start=warm_start
         self.class_weight=class_weight
 
+        print('LAZYBROOF CRIANDO')
+
     def runForests(self, X, idx, q, p):
         random_guesses = 0 
         pred = np.zeros((len(idx), self.n_classes_))
-
+        
+        print('Run Broof --')
         selector = ReduceFeatureSpace() 
         for i,ids in enumerate(idx):
             ids = ids[np.logical_and(ids < self.X_train.shape[0], ids >= 0)]

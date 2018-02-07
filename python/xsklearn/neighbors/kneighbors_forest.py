@@ -386,13 +386,10 @@ class LazyNNBert(LazyNNRF):
         self.warm_start=warm_start
         self.class_weight=class_weight
 
-        print('LAZYBERT')
-
     def runForests(self, X, idx, q, p):
         random_guesses = 0 
         pred = np.zeros((len(idx), self.n_classes_))
 
-        print('Run Bert --')
         selector = ReduceFeatureSpace() 
         for i,ids in enumerate(idx):
             ids = ids[np.logical_and(ids < self.X_train.shape[0], ids >= 0)]
@@ -416,7 +413,7 @@ class LazyNNBert(LazyNNRF):
             try:
                 rf.fit(X_t, self.y_train[ids])
                 pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
-            except(Exception, e):
+            except Exception as e:
                 # ignore adaboost worse than random guess
                 random_instance = check_random_state(self.random_state)
                 pred[i, random_instance.randint(self.n_classes_, size=1)] = 1;
@@ -492,13 +489,10 @@ class LazyNNBroof(LazyNNRF):
         self.warm_start=warm_start
         self.class_weight=class_weight
 
-        print('LAZYBROOF CRIANDO')
-
     def runForests(self, X, idx, q, p):
         random_guesses = 0 
         pred = np.zeros((len(idx), self.n_classes_))
         
-        print('Run Broof --')
         selector = ReduceFeatureSpace() 
         for i,ids in enumerate(idx):
             ids = ids[np.logical_and(ids < self.X_train.shape[0], ids >= 0)]
@@ -522,7 +516,7 @@ class LazyNNBroof(LazyNNRF):
             try:
                 rf.fit(X_t, self.y_train[ids])
                 pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
-            except(Exception, e):
+            except Exception as e:
                 # ignore adaboost worse than random guess
                 random_instance = check_random_state(self.random_state)
                 pred[i, random_instance.randint(self.n_classes_, size=1)] = 1;

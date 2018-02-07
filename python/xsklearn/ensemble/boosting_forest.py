@@ -776,6 +776,14 @@ class BoostedForestClassifier(AdaBoostClassifier):
                 incorrect = y[unsampled_indices, k] != np.argmax(p_estimator[k],
                                                                          axis=1)
                 
+                if(np.sum(unsampled_indices) == 0):
+                    print('ERROR- incorrect-')
+                    print(incorrect)
+                    print( '-- unsampled_indices -' )
+                    print(unsampled_indices)
+                    print( '-- sample_weight_tmp -' )                    
+                    print(sample_weight_tmp)
+
                 estimator_error = np.average(incorrect,
                     weights=sample_weight[unsampled_indices], axis=0)
 
@@ -828,6 +836,9 @@ class BoostedForestClassifier(AdaBoostClassifier):
         rf.decision_function_ = oob_decision_function
         rf.oob_score_ = oob_score / rf.n_outputs_
 
+        if(rf.oob_score_ < 0.000000000001):
+            print('ERROR- oob_score_ = 0')
+            print('-- n_classes_: ' + str(rf.n_classes_))
 
         alpha = self.learning_rate * (
                    np.log((1. - rf.oob_score_) / rf.oob_score_) + np.log(rf.n_classes_ - 1))

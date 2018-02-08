@@ -891,10 +891,8 @@ class BoostedForestClassifier(AdaBoostClassifier):
 
         n_classes = self.n_classes_
 
-        # Stop if the error is at least as bad as random guessing
-        
-        if (len(self.estimators_) > 1 and 
-            (estimator_error >= 1. - (1. / n_classes) or 
+        # Stop if the error is at least as bad as random guessing        
+        if ((estimator_error >= 1. - (1. / n_classes) or 
             np.isnan(estimator_error))):
             
             self.estimators_.pop(-1)

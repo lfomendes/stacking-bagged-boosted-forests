@@ -173,8 +173,11 @@ default_tuning_params = {
 				'max_features': [0.08]}],
 
 	# TODO 			
-	'lazybroof'	: [{'n_neighbors': [30, 100, 200, 500], 'n_estimators': [8], 'max_features': [0.08]}],
-	'lazybert'	: [{'n_neighbors': [30, 100, 200, 500], 'n_estimators': [8], 'max_features': [0.08]}],
+	# 'lazybroof'	: [{'n_neighbors': [30, 200, 500], 'n_estimators': [5,8,20], 'max_features': [0.08,'sqrt']}],
+	# 'lazybert'	: [{'n_neighbors': [30, 200, 500], 'n_estimators': [5,8,20], 'max_features': [0.08,'sqrt']}],
+
+	'lazybroof'	: [{'n_neighbors': [30, 200, 500]}],
+	'lazybert'	: [{'n_neighbors': [30, 200, 500]}],
 
 	'bert': [{'n_trees': [8], 'n_iterations': [200]}],
 	#'bert': [{'n_trees': [5, 8, 10, 15, 25], 'n_iterations': [50, 100, 200],

@@ -195,15 +195,15 @@ class LazyNNRF(BaseEstimator, ClassifierMixin):
             X_t, X_i = X_t[:len(ids)], X_t[len(ids):]
             #X_t, X_i = (self.X_train[ids],X[i])
             density = X_t.nnz/float(X_t.shape[0])
-            rf = ForestClassifier(n_estimators=self.n_estimators,
-                                 criterion=self.criterion,
-                                 max_depth=self.max_depth,
-                                 min_samples_split=self.min_samples_split,
-                                 min_samples_leaf=self.min_samples_leaf,
-                                 min_weight_fraction_leaf=self.min_weight_fraction_leaf,
-                                 max_features=self.max_features,
-                                 max_leaf_nodes=self.max_leaf_nodes,
-                                 random_state=self.random_state)
+            rf = ForestClassifier(n_trees=n_estimators,
+                        criterion=self.criterion,
+                        max_depth=self.max_depth,
+                        min_samples_split=self.min_samples_split,
+                        min_samples_leaf=self.min_samples_leaf,
+                        min_weight_fraction_leaf=self.min_weight_fraction_leaf,
+                        max_features=self.max_features,
+                        max_leaf_nodes=self.max_leaf_nodes,
+                        random_state=self.random_state)
 
             rf.fit(X_t, self.y_train[ids])
             pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
@@ -386,8 +386,45 @@ class LazyNNBert(LazyNNRF):
         self.warm_start=warm_start
         self.class_weight=class_weight
 
+    # def runForests(self, X, idx, q, p):
+    #     random_guesses = 0 
+    #     pred = np.zeros((len(idx), self.n_classes_))
+
+    #     selector = ReduceFeatureSpace() 
+    #     for i,ids in enumerate(idx):
+    #         ids = ids[np.logical_and(ids < self.X_train.shape[0], ids >= 0)]
+    #         X_t = selector.fit_transform(vstack((self.X_train[ids],X[i])))
+
+    #         X_t, X_i = X_t[:len(ids)], X_t[len(ids):]
+    #         #X_t, X_i = (self.X_train[ids],X[i])
+    #         density = X_t.nnz/float(X_t.shape[0])
+    #         print('BERT --')
+    #         rf = ForestClassifier(n_estimators=8,
+    #                     #n_iterations=self.n_iterations,
+    #                     #learning_rate=self.learning_rate,
+    #                     criterion=self.criterion,
+    #                     max_depth=self.max_depth,
+    #                     min_samples_split=self.min_samples_split,
+    #                     min_samples_leaf=self.min_samples_leaf,
+    #                     min_weight_fraction_leaf=self.min_weight_fraction_leaf,
+    #                     max_features=self.max_features,
+    #                     max_leaf_nodes=self.max_leaf_nodes,
+    #                     random_state=self.random_state)
+    #         try:
+    #             rf.fit(X_t, self.y_train[ids])
+    #             pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
+    #         except Exception as e:
+    #             # ignore adaboost worse than random guess
+    #             random_instance = check_random_state(self.random_state)
+    #             pred[i, random_instance.randint(self.n_classes_, size=1)] = 1;
+    #             random_guesses = random_guesses + 1
+    #             pass
+
+    #     print("Random guesses:", random_guesses)
+    #     q.put((p, pred))
+    #     return
+
     def runForests(self, X, idx, q, p):
-        random_guesses = 0 
         pred = np.zeros((len(idx), self.n_classes_))
 
         selector = ReduceFeatureSpace() 
@@ -398,8 +435,7 @@ class LazyNNBert(LazyNNRF):
             X_t, X_i = X_t[:len(ids)], X_t[len(ids):]
             #X_t, X_i = (self.X_train[ids],X[i])
             density = X_t.nnz/float(X_t.shape[0])
-            print('BERT --')
-            rf = Bert(n_trees=self.n_estimators,
+            rf = Bert(  n_trees=n_estimators,
                         n_iterations=self.n_iterations,
                         learning_rate=self.learning_rate,
                         criterion=self.criterion,
@@ -410,19 +446,12 @@ class LazyNNBert(LazyNNRF):
                         max_features=self.max_features,
                         max_leaf_nodes=self.max_leaf_nodes,
                         random_state=self.random_state)
-            try:
-                rf.fit(X_t, self.y_train[ids])
-                pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
-            except Exception as e:
-                # ignore adaboost worse than random guess
-                random_instance = check_random_state(self.random_state)
-                pred[i, random_instance.randint(self.n_classes_, size=1)] = 1;
-                random_guesses = random_guesses + 1
-                pass
 
-        print("Random guesses:", random_guesses)
+            rf.fit(X_t, self.y_train[ids])
+            pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
+
         q.put((p, pred))
-        return
+        return        
 
 class LazyNNBroof(LazyNNRF):
     def __init__(self,
@@ -489,10 +518,46 @@ class LazyNNBroof(LazyNNRF):
         self.warm_start=warm_start
         self.class_weight=class_weight
 
-    def runForests(self, X, idx, q, p):
-        random_guesses = 0 
-        pred = np.zeros((len(idx), self.n_classes_))
+    # def runForests(self, X, idx, q, p):
+    #     random_guesses = 0 
+    #     pred = np.zeros((len(idx), self.n_classes_))
         
+    #     selector = ReduceFeatureSpace() 
+    #     for i,ids in enumerate(idx):
+    #         ids = ids[np.logical_and(ids < self.X_train.shape[0], ids >= 0)]
+    #         X_t = selector.fit_transform(vstack((self.X_train[ids],X[i])))
+
+    #         X_t, X_i = X_t[:len(ids)], X_t[len(ids):]
+    #         #X_t, X_i = (self.X_train[ids],X[i])
+    #         density = X_t.nnz/float(X_t.shape[0])
+    #         print('Broof --')
+    #         rf = Broof(n_trees=self.n_estimators,
+    #                     n_iterations=self.n_iterations,
+    #                     learning_rate=self.learning_rate,
+    #                     criterion=self.criterion,
+    #                     max_depth=self.max_depth,
+    #                     min_samples_split=self.min_samples_split,
+    #                     min_samples_leaf=self.min_samples_leaf,
+    #                     min_weight_fraction_leaf=self.min_weight_fraction_leaf,
+    #                     max_features=self.max_features,
+    #                     max_leaf_nodes=self.max_leaf_nodes,
+    #                     random_state=self.random_state)
+    #         try:
+    #             rf.fit(X_t, self.y_train[ids])
+    #             pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
+    #         except Exception as e:
+    #             # ignore adaboost worse than random guess
+    #             random_instance = check_random_state(self.random_state)
+    #             pred[i, random_instance.randint(self.n_classes_, size=1)] = 1;
+    #             random_guesses = random_guesses + 1
+    #             pass
+
+    #     print("Random guesses:", random_guesses)
+    #     q.put((p, pred))
+    #     return
+    def runForests(self, X, idx, q, p):
+        pred = np.zeros((len(idx), self.n_classes_))
+
         selector = ReduceFeatureSpace() 
         for i,ids in enumerate(idx):
             ids = ids[np.logical_and(ids < self.X_train.shape[0], ids >= 0)]
@@ -501,8 +566,7 @@ class LazyNNBroof(LazyNNRF):
             X_t, X_i = X_t[:len(ids)], X_t[len(ids):]
             #X_t, X_i = (self.X_train[ids],X[i])
             density = X_t.nnz/float(X_t.shape[0])
-            print('Broof --')
-            rf = Broof(n_trees=self.n_estimators,
+            rf = Broof( n_trees=n_estimators,
                         n_iterations=self.n_iterations,
                         learning_rate=self.learning_rate,
                         criterion=self.criterion,
@@ -513,16 +577,9 @@ class LazyNNBroof(LazyNNRF):
                         max_features=self.max_features,
                         max_leaf_nodes=self.max_leaf_nodes,
                         random_state=self.random_state)
-            try:
-                rf.fit(X_t, self.y_train[ids])
-                pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
-            except Exception as e:
-                # ignore adaboost worse than random guess
-                random_instance = check_random_state(self.random_state)
-                pred[i, random_instance.randint(self.n_classes_, size=1)] = 1;
-                random_guesses = random_guesses + 1
-                pass
 
-        print("Random guesses:", random_guesses)
+            rf.fit(X_t, self.y_train[ids])
+            pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
+
         q.put((p, pred))
-        return
+        return  

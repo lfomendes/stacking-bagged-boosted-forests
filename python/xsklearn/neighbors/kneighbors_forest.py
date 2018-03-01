@@ -447,8 +447,22 @@ class LazyNNBert(LazyNNRF):
                         max_leaf_nodes=self.max_leaf_nodes,
                         random_state=self.random_state)
 
-            rf.fit(X_t, self.y_train[ids])
-            pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
+            try:
+                rf.fit(X_t, self.y_train[ids])
+                pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
+            except Exception as e:
+                rf = ForestClassifier(n_estimators=self.n_estimators,
+                        criterion=self.criterion,
+                        max_depth=self.max_depth,
+                        min_samples_split=self.min_samples_split,
+                        min_samples_leaf=self.min_samples_leaf,
+                        min_weight_fraction_leaf=self.min_weight_fraction_leaf,
+                        max_features=self.max_features,
+                        max_leaf_nodes=self.max_leaf_nodes,
+                        random_state=self.random_state)
+
+                rf.fit(X_t, self.y_train[ids])
+                pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
 
         q.put((p, pred))
         return        
@@ -577,9 +591,22 @@ class LazyNNBroof(LazyNNRF):
                         max_features=self.max_features,
                         max_leaf_nodes=self.max_leaf_nodes,
                         random_state=self.random_state)
+            try:
+                rf.fit(X_t, self.y_train[ids])
+                pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
+            except Exception as e:
+                rf = ForestClassifier(n_estimators=self.n_estimators,
+                        criterion=self.criterion,
+                        max_depth=self.max_depth,
+                        min_samples_split=self.min_samples_split,
+                        min_samples_leaf=self.min_samples_leaf,
+                        min_weight_fraction_leaf=self.min_weight_fraction_leaf,
+                        max_features=self.max_features,
+                        max_leaf_nodes=self.max_leaf_nodes,
+                        random_state=self.random_state)
 
-            rf.fit(X_t, self.y_train[ids])
-            pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
-
+                rf.fit(X_t, self.y_train[ids])
+                pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
+                    
         q.put((p, pred))
         return  

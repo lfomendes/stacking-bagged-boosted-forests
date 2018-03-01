@@ -79,8 +79,6 @@ python ../python/main.py -m ${method} -t 100 -k 100 -f 'sqrt' --criterion gini -
 # dataset=acm
 # python ../python/main.py -m ${method} --criterion entropy -t 8 -i 200 -f 'sqrt' -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
 
-echo 'LazyBert 300'
-dataset=acm
 method=lazybert
 python ../python/main.py -m ${method} -i 100 -t 100 -k 300 -f 'sqrt' --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_300 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_300
 
@@ -89,12 +87,15 @@ python ../python/main.py -m ${method} -i 100 -t 100 -k 300 -f 'sqrt' --criterion
 # method=lazybert
 # python ../python/main.py -m ${method} --i 100 t 100 -k 50 -f 0.08 --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_50 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_50
 
-echo 'LazyBroof 300'
-#dataset=spambase
+method=lazybert
+python ../python/main.py -m ${method} -i 100 -t 100 -k 100 -f 0.08 --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_100 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_100
+
+echo 'LazyBroof  100k 100'
 method=lazybroof
 python ../python/main.py -m ${method} -i 100 -t 100 -k 300 -f 'sqrt' --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_300 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_300
 
 echo 'LazyBroof 300 8'
+dataset=spambase
 method=lazybroof
 python ../python/main.py -m ${method} -i 100 -t 8 -k 300 -f 'sqrt' --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_300_8 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_300_8
 

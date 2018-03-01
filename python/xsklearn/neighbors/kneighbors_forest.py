@@ -451,7 +451,7 @@ class LazyNNBert(LazyNNRF):
                 rf.fit(X_t, self.y_train[ids])
                 pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
             except Exception as e:
-                rf = ForestClassifier(n_trees=n_estimators,
+                rf = ForestClassifier(n_estimators=self.n_estimators,
                         criterion=self.criterion,
                         max_depth=self.max_depth,
                         min_samples_split=self.min_samples_split,
@@ -595,7 +595,7 @@ class LazyNNBroof(LazyNNRF):
                 rf.fit(X_t, self.y_train[ids])
                 pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
             except Exception as e:
-                rf = ForestClassifier(n_trees=n_estimators,
+                rf = ForestClassifier(n_estimators=self.n_estimators,
                         criterion=self.criterion,
                         max_depth=self.max_depth,
                         min_samples_split=self.min_samples_split,

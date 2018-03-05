@@ -69,18 +69,18 @@ dataset=acm
 # dataset=spambase
 # python ../python/main.py -m ${method} -t 8 -i 100 -f 0.08 -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
 
-# echo 'Bert'
-# method=bert
-# dataset=acm
-# python ../python/main.py -m ${method} --criterion gini -t 8 -i 200 -f 'sqrt' -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_8 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_8
+echo 'Bert 8'
+method=bert
+dataset=acm
+python ../python/main.py -m ${method} --criterion gini -t 8 -i 100 -f 'sqrt' -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_8 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_8
 
-# echo 'Bert'
-# method=bert
-# python ../python/main.py -m ${method} --criterion gini -t 100 -i 100 -f 'sqrt' -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_100 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_100
+echo 'Bert 100'
+method=bert
+python ../python/main.py -m ${method} --criterion gini -t 100 -i 100 -f 'sqrt' -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_100 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_100
 
-# echo 'LazyBert 30k 100'
-# method=lazybert
-# python ../python/main.py -m ${method} -i 100 -t 100 -k 30 -f 'sqrt' --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_30 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_30
+echo 'LazyBert 30k 100'
+method=lazybert
+python ../python/main.py -m ${method} -i 100 -t 100 -k 30 -f 'sqrt' --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_30 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_30
 
 echo 'LazyBert 300k 100'
 method=lazybert

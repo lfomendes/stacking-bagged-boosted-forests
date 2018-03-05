@@ -962,7 +962,12 @@ class BoostedForestClassifier(AdaBoostClassifier):
         self.estimator_weights_ = np.zeros(self.n_estimators, dtype=np.float)
         self.estimator_errors_ = np.ones(self.n_estimators, dtype=np.float)
 
+        iterations = 0
+
         for iboost in range(self.n_estimators):
+
+            iterations = iterations + 1
+
             # Boosting step
             sample_weight, estimator_weight, estimator_error = self._boost(
                 iboost,
@@ -991,6 +996,9 @@ class BoostedForestClassifier(AdaBoostClassifier):
                 sample_weight /= sample_weight_sum
  
         self.oob_decision_function_ = self.oob_proba()
+
+        print('NUMBER OF ITERATION:' + str(iterations))
+
         return self
     
     def prune(self, y):

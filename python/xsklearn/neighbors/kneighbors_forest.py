@@ -426,6 +426,8 @@ class LazyNNBert(LazyNNRF):
 
     def runForests(self, X, idx, q, p):
         pred = np.zeros((len(idx), self.n_classes_))
+        rf_guesses = 0 
+        bert_guesses = 0
 
         selector = ReduceFeatureSpace() 
         for i,ids in enumerate(idx):
@@ -450,6 +452,7 @@ class LazyNNBert(LazyNNRF):
             try:
                 rf.fit(X_t, self.y_train[ids])
                 pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
+                bert_guesses = bert_guesses + 1
             except Exception as e:
                 rf = ForestClassifier(n_estimators=self.n_estimators,
                         criterion=self.criterion,
@@ -463,7 +466,10 @@ class LazyNNBert(LazyNNRF):
 
                 rf.fit(X_t, self.y_train[ids])
                 pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
+                rf_guesses = rf_guesses + 1
 
+        print("BERT Guesses:", bert_guesses)             
+        print("RF Exceptions:", rf_guesses) 
         q.put((p, pred))
         return        
 
@@ -571,6 +577,8 @@ class LazyNNBroof(LazyNNRF):
     #     return
     def runForests(self, X, idx, q, p):
         pred = np.zeros((len(idx), self.n_classes_))
+        rf_guesses = 0 
+        broof_guesses = 0
 
         selector = ReduceFeatureSpace() 
         for i,ids in enumerate(idx):
@@ -594,6 +602,7 @@ class LazyNNBroof(LazyNNRF):
             try:
                 rf.fit(X_t, self.y_train[ids])
                 pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
+                broof_guesses = broof_guesses + 1
             except Exception as e:
                 rf = ForestClassifier(n_estimators=self.n_estimators,
                         criterion=self.criterion,
@@ -607,6 +616,9 @@ class LazyNNBroof(LazyNNRF):
 
                 rf.fit(X_t, self.y_train[ids])
                 pred[i, np.searchsorted(self.classes_, rf.classes_)] = rf.predict_proba(X_i)[0]
-                    
+                rf_guesses = rf_guesses + 1
+        
+        print("BROOF:", broof_guesses)             
+        print("RF Exceptions:", rf_guesses)             
         q.put((p, pred))
         return  

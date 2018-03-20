@@ -86,9 +86,9 @@ python ../python/main.py -m ${method} -i 100 -t 100 -k 30 -f 'sqrt' --criterion 
 # dataset=acm
 # python ../python/main.py -m ${method} --criterion gini -t 8 -i 100 -f 'sqrt' -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_8 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_8
 
-echo 'Bert 100'
-method=bert
-python ../python/main.py -m ${method} --criterion gini -t 30 -i 100 -f 'sqrt' -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_30 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_30
+#echo 'Bert 30'
+#method=bert
+#python ../python/main.py -m ${method} --criterion gini -t 30 -i 100 -f 'sqrt' -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_30 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_30
 
 echo 'LazyBert 100k 100'
 method=lazybert
@@ -98,14 +98,18 @@ echo 'LazyBroof 100k 100'
 method=lazybroof
 python ../python/main.py -m ${method} -i 100 -t 100 -k 100 -f 'sqrt' --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_100 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_100
 
-echo 'LazyBert 200k 100'
+echo 'LazyBert 300k 100'
 method=lazybert
-python ../python/main.py -m ${method} -i 100 -t 100 -k 200 -f 'sqrt' --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_200 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_200
+python ../python/main.py -m ${method} -i 100 -t 100 -k 300 -f 'sqrt' --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_300 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_300
 
 echo 'LazyBert 500k 100'
 method=lazybert
 python ../python/main.py -m ${method} -i 100 -t 100 -k 500 -f 'sqrt' --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_500 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_500
 
-echo 'LazyBroof 100k 100'
+echo 'LazyBert 500k 8'
+method=lazybert
+python ../python/main.py -m ${method} -i 100 -t 8 -k 500 -f 'sqrt' --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_500_8 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_500_8
+
+echo 'LazyBroof 500k 100'
 method=lazybroof
 python ../python/main.py -m ${method} -i 100 -t 100 -k 500 -f 'sqrt' --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_500 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_500                                                                                                                      

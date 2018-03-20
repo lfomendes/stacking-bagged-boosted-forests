@@ -195,7 +195,7 @@ class LazyNNRF(BaseEstimator, ClassifierMixin):
             X_t, X_i = X_t[:len(ids)], X_t[len(ids):]
             #X_t, X_i = (self.X_train[ids],X[i])
             density = X_t.nnz/float(X_t.shape[0])
-            rf = ForestClassifier(n_estimators=n_estimators,
+            rf = ForestClassifier(n_estimators=self._estimators,
                         criterion=self.criterion,
                         max_depth=self.max_depth,
                         min_samples_split=self.min_samples_split,

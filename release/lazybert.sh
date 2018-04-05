@@ -6,9 +6,9 @@ n_jobs=$3
 trials=5
 k=100
 seed=42
-cv=3
+cv=0
 
-datasets=('spambase')
+datasets=('acm')
 
 ################################################################################
 #				 					${dataset} 									   #
@@ -29,7 +29,6 @@ do
 	# # Random Forest
 	# method=xt
 	# python ../python/main.py -m ${method} -g 1 -j ${n_jobs} --cv ${cv} -s ${seed} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
-
 	# echo 'Model:'
 	# echo 'lazy'
 	# # Lazy Random Forest
@@ -48,55 +47,61 @@ do
 	#method=bert
 	#python ../python/main.py -m ${method} --cv ${cv} -g 1 -j ${n_jobs} -s ${seed} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
 
-	# echo 'Model:'
-	# echo 'Lazy Broof'
-	# #Lazy BROOF
-	# method=lazybroof
-	# python ../python/main.py -m ${method} --cv ${cv} -g 1 -j ${n_jobs} -s ${seed} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
+	#echo 'Model:'
+	#echo 'Lazy Broof'
+	##Lazy BROOF
+	#method=lazybroof
+	#python ../python/main.py -m ${method} --cv ${cv} -g 1 -j ${n_jobs} -s ${seed} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
 
-	# echo 'Model:'
-	# echo 'Lazy Bert'
-	# # Lazy BERT
-	# method=lazybert
-	# python ../python/main.py -m ${method} --cv ${cv} -g 1 -j ${n_jobs} -s ${seed} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
+	#echo 'Model:'
+	#echo 'Lazy Bert'
+	# Lazy BERT
+	#method=lazybert
+	#python ../python/main.py -m ${method} --cv ${cv} -g 1 -j ${n_jobs} -s ${seed} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
 
 done
 
+#echo 'Broof'
+#method=broof
+dataset=acm
+#python ../python/main.py -m ${method} -t 8 -i 100 -f 'log2' -g 1 --criterion gini -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
 
-# echo 'Broof'
-# method=broof
-# dataset=spambase
-# python ../python/main.py -m ${method} -t 8 -i 100 -f 0.08 -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
+#echo 'Bert'
+#method=bert::wq
+#python ../python/main.py -m ${method} --criterion gini -t 8 -i 200 -f 'log2' -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
+
+echo 'LazyRF'
+method=lazy
+python ../python/main.py -m ${method} -t 100 -k 100 -f 'sqrt' --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_100 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_100
 
 # echo 'Bert'
 # method=bert
 # dataset=acm
 # python ../python/main.py -m ${method} --criterion entropy -t 8 -i 200 -f 'sqrt' -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset} ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}
 
-echo 'LazyBert 30k 100'
-dataset=spambase
 method=lazybert
-python ../python/main.py -m ${method} -i 100 -t 100 -k 30 -f 0.08 --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_30 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_30
+python ../python/main.py -m ${method} -i 100 -t 100 -k 300 -f 'sqrt' --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_300 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_300
 
 # echo 'LazyBert'
 # dataset=spambase
 # method=lazybert
 # python ../python/main.py -m ${method} --i 100 t 100 -k 50 -f 0.08 --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_50 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_50
 
-echo 'LazyBert 100k 100'
-dataset=spambase
 method=lazybert
 python ../python/main.py -m ${method} -i 100 -t 100 -k 100 -f 0.08 --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_100 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_100
 
 echo 'LazyBroof  100k 100'
-dataset=spambase
 method=lazybroof
-python ../python/main.py -m ${method} -i 100 -t 100 -k 100 -f 0.08 --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_300 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_100
+python ../python/main.py -m ${method} -i 100 -t 100 -k 300 -f 'sqrt' --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_300 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_300
 
-echo 'LazyBroof  300k 100'
+echo 'LazyBroof 300 8'
 dataset=spambase
 method=lazybroof
-python ../python/main.py -m ${method} -i 100 --criterion gini -t 100 -k 300 -f 0.08 -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_100 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_300
+python ../python/main.py -m ${method} -i 100 -t 8 -k 300 -f 'sqrt' --criterion gini -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_300_8 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_300_8
+
+echo 'LazyBert 300 8'
+method=lazybert
+python ../python/main.py -m ${method} -i 100 --criterion gini -t 8 -k 300 -f 'sqrt' -g 1 -j ${n_jobs} --trials ${trials} --o ${output_dir}/results_${method}_${dataset}_300_8 ${dataset_dir}/${dataset}.svm > ${output_dir}/grid_${method}_${dataset}_300_8
 
 # echo 'LazyBroof'
 # method=lazybroof

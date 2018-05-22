@@ -1,4 +1,4 @@
-from sklearn.datasets import load_iris, fetch_20newsgroups, load_svmlight_file, dump_svmlight_file
+from sklearn.datasets import load_iris, fetch_20newsgroups, load_svmlight_file, dump_svmlight_file, load_svmlight_files
 from sklearn.model_selection import KFold, StratifiedKFold
 from sklearn.svm import LinearSVC
 
@@ -122,28 +122,17 @@ class ClassificationApp(BaseApp):
         self.parser.add_argument("--fs", help='Feature selection that will be applied', choices=['l1',"variance", "chi2", "RFECV", "importance"],
                                  default=None)
 
-        self.parser.add_argument("-d", "--dump", type=str, help='Save each fold stacking.', default="")
-        self.parser.add_argument("--dump_meta_level", type=str, help='Save each fold stacking.', default="")
+        self.parser.add_argument("-d", "--dump", type=str, help='Save each fold stacking.',
+                                 default="")
+
+        self.parser.add_argument("--dump_meta_level", type=str, help='Save each fold stacking.',
+                                 default="")
+
+        self.parser.add_argument("--folds", help='Path to input training and test folds',
+                                 default=None)
 
     def parse_arguments(self):
         return self.parser.parse_args()
-
-    def _load_dataset(self, args):
-        start = time.time()
-
-        if args.dataset == 'toy':
-            twenty_train = fetch_20newsgroups(subset='train', shuffle=True, random_state=42)
-            count_vect = CountVectorizer(min_df=3, stop_words='english')
-            X = count_vect.fit_transform(twenty_train.data)
-            y = twenty_train.target
-        else:
-            X, y = load_svmlight_file(args.dataset)
-
-        end = time.time()
-
-        self.datasetLoadingTime = end - start;
-
-        return X, y
 
     def _setup_instantiator(self, args):
         random_instance = check_random_state(args.seed)
@@ -173,14 +162,75 @@ class ClassificationApp(BaseApp):
         print("\tMicro: ", self.folds_micro[-1])
         print("\tMacro: ", self.folds_macro[-1])
 
+    class DatasetReader:
+        '''
+            Used to read the dataset and return the train and test instances
+            It can be used to read from a whole file or
+            using the LBD default fold partition
+        '''
+        def __init__(self, args):
+            self.current_fold = 0
+            self.default_fold_partition = True
+            self.dataset = args.dataset
+
+            if args.folds :
+                self.train_folds = sorted([filename for filename in os.listdir(args.folds) if filename.startswith("train")])
+                self.test_folds = sorted([filename for filename in os.listdir(args.folds) if filename.startswith("test")])
+            else:
+                self.X, self.y = self._load_file_whole(args.dataset)
+                self.default_fold_partition = False
+                skf = StratifiedKFold(n_splits=args.trials, shuffle=True, random_state=args.seed)
+                self.split = skf.split(self.X, self.y)
+
+        def _load_dataset_from_folds(train_file, test_file):
+            return load_svmlight_files([train_file, test_file], dtype=np.float64)
+
+        def _load_file_whole(dataset):
+            return load_svmlight_file(dataset)
+
+        def get_next_fold(self):
+
+            # If it is the default partition
+            if self.default_fold_partition:
+                if self.current_fold < len(self.train_folds):
+                    train_fold = self.train_folds[self.current_fold]
+                    test_fold = self.test_folds[self.current_fold]
+                    return self._load_dataset_from_folds(self.dataset+train_fold, self.dataset+test_fold)
+                else:
+                    return None
+            else:
+                if self.current_fold < len(self.split):
+                    train_index = self.split[self.current_fold][0]
+                    test_index = self.split[self.current_fold][1]
+
+                    # Returning the next fold from the full libsvm file
+                    X_train, X_test = self.X[train_index], self.X[test_index]
+                    y_train, y_test = self.y[train_index], self.y[test_index]
+
+                    return X_train, y_train, X_test, y_test
+                else:
+                    return None
+
+            self.current_fold += 1
+
+        def has_next(self):
+            # If it is the default partition
+            if self.default_fold_partition:
+                if self.current_fold < len(self.train_folds):
+                    return True
+                else:
+                    return False
+            else:
+                if self.current_fold < len(self.split):
+                    return True
+                else:
+                    return False
+
+
     def run(self, args):
-        X, y = self._load_dataset(args)
-        print(X.shape)
-        print(args)
 
-        skf = StratifiedKFold(n_splits=args.trials, shuffle=True, random_state=args.seed)
+        dataset_reader = self.DatasetReader(args)
 
-        print(skf)
         estimator, tuned_parameters = self._setup_instantiator(args)
 
         folds_time = []
@@ -191,15 +241,14 @@ class ClassificationApp(BaseApp):
         print(estimator.get_params(deep=False))
 
         k = 1
-        for train_index, test_index in skf.split(X, y):
+        while dataset_reader.has_next():
 
             if k < args.start_fold:
                 k = k + 1
                 continue
 
             # split dataset
-            X_train, X_test = X[train_index], X[test_index]
-            y_train, y_test = y[train_index], y[test_index]
+            X_train, y_train, X_test, y_test = dataset_reader.get_next_fold()
 
             tf_transformer = TfidfTransformer(norm=args.norm, use_idf=True,
                                               smooth_idf=True, sublinear_tf=True)
@@ -226,37 +275,7 @@ class ClassificationApp(BaseApp):
 
             # doing the feature selection
             if args.fs:
-                print('Doing the Feature Selection')
-                print(X_train.shape)
-                if args.fs == 'variance':
-                    print('Variance')
-                    selector = VarianceThreshold(threshold=0.01)
-                    X_train = selector.fit_transform(X_train)
-                    print(selector.variances_)
-                if args.fs == 'chi2':
-                    print('Chi2')
-                    print('Using the chi2 feature selection')
-                    selector = SelectPercentile(chi2, percentile=80)
-                    X_train = selector.fit_transform(X_train, y_train)
-                if args.fs == 'RFECV':
-                    print('Using the RFECV feature selection')
-                    selector = RFECV(estimator=e, step=0.05, scoring='f1_macro', n_jobs=args.n_jobs)
-                    X_train = selector.fit_transform(X_train, y_train)
-                    print("Optimal number of features : %d" % selector.n_features_)
-                if args.fs == 'importance':
-                    print('Using the tree importance feature selection')
-                    forest = ExtraTreesClassifier(n_estimators=50)
-                    forest = forest.fit(X_train, y_train)
-                    selector = SelectFromModel(forest, prefit=True, threshold='0.3*mean')
-                    X_train = selector.transform(X_train)
-                if args.fs == 'l1':
-                    print('Using the l1 feature selection')
-                    lsvc = LinearSVC(C=0.01, penalty="l1", dual=False).fit(X, y)
-                    selector = SelectFromModel(lsvc, prefit=True)
-                    X_train = selector.transform(X_train)
-
-                X_test = selector.transform(X_test)
-                print(X_train.shape)
+                X_test, X_train = self.feature_selection(X_test, X_train, args, e, y_train)
 
             # fit and predict
             start = time.time()
@@ -329,6 +348,39 @@ class ClassificationApp(BaseApp):
 
         print('loading time : ', self.datasetLoadingTime)
         print('times : ', np.average(folds_time), np.std(folds_time))
+
+    def feature_selection(self, X_test, X_train, args, e, y_train):
+        print('Doing the Feature Selection')
+        print(X_train.shape)
+        if args.fs == 'variance':
+            print('Variance')
+            selector = VarianceThreshold(threshold=0.01)
+            X_train = selector.fit_transform(X_train)
+            print(selector.variances_)
+        if args.fs == 'chi2':
+            print('Chi2')
+            print('Using the chi2 feature selection')
+            selector = SelectPercentile(chi2, percentile=80)
+            X_train = selector.fit_transform(X_train, y_train)
+        if args.fs == 'RFECV':
+            print('Using the RFECV feature selection')
+            selector = RFECV(estimator=e, step=0.05, scoring='f1_macro', n_jobs=args.n_jobs)
+            X_train = selector.fit_transform(X_train, y_train)
+            print("Optimal number of features : %d" % selector.n_features_)
+        if args.fs == 'importance':
+            print('Using the tree importance feature selection')
+            forest = ExtraTreesClassifier(n_estimators=50)
+            forest = forest.fit(X_train, y_train)
+            selector = SelectFromModel(forest, prefit=True, threshold='0.3*mean')
+            X_train = selector.transform(X_train)
+        if args.fs == 'l1':
+            print('Using the l1 feature selection')
+            lsvc = LinearSVC(C=0.01, penalty="l1", dual=False).fit(X, y)
+            selector = SelectFromModel(lsvc, prefit=True)
+            X_train = selector.transform(X_train)
+        X_test = selector.transform(X_test)
+        print(X_train.shape)
+        return X_test, X_train
 
 
 class TextClassificationApp(ClassificationApp):

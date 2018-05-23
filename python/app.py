@@ -172,6 +172,7 @@ class ClassificationApp(BaseApp):
             self.current_fold = 0
             self.default_fold_partition = True
             self.dataset = args.dataset
+            self.split = []
 
             if args.folds :
                 self.train_folds = sorted([filename for filename in os.listdir(args.folds) if filename.startswith("train")])
@@ -180,12 +181,13 @@ class ClassificationApp(BaseApp):
                 self.X, self.y = self._load_file_whole(args.dataset)
                 self.default_fold_partition = False
                 skf = StratifiedKFold(n_splits=args.trials, shuffle=True, random_state=args.seed)
-                self.split = skf.split(self.X, self.y)
+                for train_index, test_index in skf.split(self.X, self.y):
+                    self.split.append([train_index, test_index])
 
-        def _load_dataset_from_folds(train_file, test_file):
+        def _load_dataset_from_folds(self, train_file, test_file):
             return load_svmlight_files([train_file, test_file], dtype=np.float64)
 
-        def _load_file_whole(dataset):
+        def _load_file_whole(self, dataset):
             return load_svmlight_file(dataset)
 
         def get_next_fold(self):
@@ -195,6 +197,8 @@ class ClassificationApp(BaseApp):
                 if self.current_fold < len(self.train_folds):
                     train_fold = self.train_folds[self.current_fold]
                     test_fold = self.test_folds[self.current_fold]
+
+                    self.current_fold = self.current_fold +1
                     return self._load_dataset_from_folds(self.dataset+train_fold, self.dataset+test_fold)
                 else:
                     return None
@@ -207,6 +211,7 @@ class ClassificationApp(BaseApp):
                     X_train, X_test = self.X[train_index], self.X[test_index]
                     y_train, y_test = self.y[train_index], self.y[test_index]
 
+                    self.current_fold = self.current_fold + 1
                     return X_train, y_train, X_test, y_test
                 else:
                     return None
@@ -242,6 +247,7 @@ class ClassificationApp(BaseApp):
 
         k = 1
         while dataset_reader.has_next():
+            print('\n\n\FOLD ' + str(k))
 
             if k < args.start_fold:
                 k = k + 1
@@ -346,8 +352,9 @@ class ClassificationApp(BaseApp):
         print("\tMicro: ", np.average(self.folds_micro), np.std(self.folds_micro))
         print("\tMacro: ", np.average(self.folds_macro), np.std(self.folds_macro))
 
-        print('loading time : ', self.datasetLoadingTime)
-        print('times : ', np.average(folds_time), np.std(folds_time))
+        # TODO readicionar isso
+        # print('loading time : ', self.datasetLoadingTime)
+        # print('times : ', np.average(folds_time), np.std(folds_time))
 
     def feature_selection(self, X_test, X_train, args, e, y_train):
         print('Doing the Feature Selection')

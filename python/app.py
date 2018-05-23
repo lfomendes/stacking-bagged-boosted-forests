@@ -22,6 +22,7 @@ import numpy as np
 import argparse
 import time
 import json
+import os
 
 MAX_INT = np.iinfo(np.int32).max
 
@@ -172,11 +173,13 @@ class ClassificationApp(BaseApp):
             self.current_fold = 0
             self.default_fold_partition = True
             self.dataset = args.dataset
+            self.folds_path = args.folds
             self.split = []
 
-            if args.folds :
-                self.train_folds = sorted([filename for filename in os.listdir(args.folds) if filename.startswith("train")])
-                self.test_folds = sorted([filename for filename in os.listdir(args.folds) if filename.startswith("test")])
+            if self.folds_path:
+                print('Loading folds')
+                self.train_folds = sorted([filename for filename in os.listdir(self.folds_path) if filename.startswith("train")])
+                self.test_folds = sorted([filename for filename in os.listdir(self.folds_path) if filename.startswith("test")])
             else:
                 self.X, self.y = self._load_file_whole(args.dataset)
                 self.default_fold_partition = False
@@ -199,7 +202,7 @@ class ClassificationApp(BaseApp):
                     test_fold = self.test_folds[self.current_fold]
 
                     self.current_fold = self.current_fold +1
-                    return self._load_dataset_from_folds(self.dataset+train_fold, self.dataset+test_fold)
+                    return self._load_dataset_from_folds(os.path.join(self.folds_path, train_fold), os.path.join(self.folds_path, test_fold))
                 else:
                     return None
             else:
@@ -247,7 +250,7 @@ class ClassificationApp(BaseApp):
 
         k = 1
         while dataset_reader.has_next():
-            print('\n\n\FOLD ' + str(k))
+            print('\n\nFOLD ' + str(k))
 
             if k < args.start_fold:
                 k = k + 1
